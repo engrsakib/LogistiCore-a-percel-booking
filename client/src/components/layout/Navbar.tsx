@@ -1,184 +1,3 @@
-// // import Logo from "@/components/navbar-components/logo"
-// import { Button } from "@/components/ui/button"
-// import {
-//   NavigationMenu,
-//   NavigationMenuItem,
-//   NavigationMenuLink,
-//   NavigationMenuList,
-// } from "@/components/ui/navigation-menu"
-// import {
-//   Popover,
-//   PopoverContent,
-//   PopoverTrigger,
-// } from "@/components/ui/popover"
-// import { ModeToggle } from "./ModeToggle"
-// import { Link } from "react-router"
-// import { authApi, useLogoutMutation, useUserInfoQuery } from "@/redux/features/auth/auth.api"
-// import { useAppDispatch } from "@/redux/hook"
-// import { role } from "@/constants/role"
-
-// // Navigation links array to be used in both desktop and mobile menus
-// const navigationLinks = [
-//   { href: "/", label: "Home", active: true, role: "Publish" },
-//   { href: "about", label: "About", role: "Publish" },
-//   { href: "contact", label: "Contact Us", role: "Publish" },
-//   { href: "admin", label: "Dashboard", role: role.Admin },
-//   { href: "sender", label: "Dashboard", role: role.Sender },
-//   { href: "receiver", label: "Dashboard", role: role.Receiver },
-// ]
-
-// export default function Navbar() {
-
-//   const { data } = useUserInfoQuery(undefined);
-//   console.log(data?.data?.email);
-//   const [logout] = useLogoutMutation();
-//   const dispatch = useAppDispatch()
-
-//   const handleLogout = () => {
-//     logout(undefined)
-//     dispatch(authApi.util.resetApiState())
-//   }
-
-//   return (
-//     <header className="border-b px-4 md:px-6 container mx-auto">
-
-//       <div className="flex h-16 items-center justify-between gap-4">
-//         {/* Left side */}
-//         <div className="flex items-center gap-2">
-//           {/* Mobile menu trigger */}
-//           <Popover>
-//             <PopoverTrigger asChild>
-//               <Button
-//                 className="group size-8 md:hidden"
-//                 variant="ghost"
-//                 size="icon"
-//               >
-//                 <svg
-//                   className="pointer-events-none"
-//                   width={16}
-//                   height={16}
-//                   viewBox="0 0 24 24"
-//                   fill="none"
-//                   stroke="currentColor"
-//                   strokeWidth="2"
-//                   strokeLinecap="round"
-//                   strokeLinejoin="round"
-//                   xmlns="http://www.w3.org/2000/svg"
-//                 >
-//                   <path
-//                     d="M4 12L20 12"
-//                     className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
-//                   />
-//                   <path
-//                     d="M4 12H20"
-//                     className="origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.8)] group-aria-expanded:rotate-45"
-//                   />
-//                   <path
-//                     d="M4 12H20"
-//                     className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[135deg]"
-//                   />
-//                 </svg>
-//               </Button>
-//             </PopoverTrigger>
-//             <PopoverContent align="start" className="w-36 p-1 md:hidden">
-//               <NavigationMenu className="max-w-none *:w-full">
-//                 <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
-//                   {navigationLinks.map((link, index) => (
-//                     <NavigationMenuItem key={index} className="w-full">
-//                       <NavigationMenuLink
-//                         href={link.href}
-//                         className="py-1.5"
-//                         active={link.active}
-//                       >
-//                         {link.label}
-//                       </NavigationMenuLink>
-//                     </NavigationMenuItem>
-//                   ))}
-//                 </NavigationMenuList>
-//               </NavigationMenu>
-//             </PopoverContent>
-//           </Popover>
-//           {/* Main nav */}
-//           <div className="flex items-center gap-6">
-//             <Link to={"/"}>
-//              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-//                 <path d="M30 28V12C30 10.8954 29.1046 10 28 10H27.8994C27.369 10 26.8604 10.2109 26.4854 10.5859L10.5859 26.4854C10.2109 26.8604 10 27.369 10 27.8994V40H0V27.8994C2.15312e-05 24.7168 1.26423 21.6645 3.51465 19.4141L19.4141 3.51465C21.6645 1.26423 24.7168 2.1373e-05 27.8994 0H28C34.6274 0 40 5.37258 40 12V28C40 34.6274 34.6274 40 28 40H14V30H28C29.1046 30 30 29.1046 30 28Z M0 0H17L7 10H0V0Z" fill="#FF4D00"></path>
-//               </svg>
-//             </Link>
-
-
-
-//             {/* Navigation menu */}
-//             <NavigationMenu className="max-md:hidden">
-
-//               <NavigationMenuList className="gap-2">
-//                 {navigationLinks.map((link, index) => (
-//                   <div>
-//                     {link.role === "Publish" &&
-//                       <NavigationMenuItem key={index}>
-//                         <NavigationMenuLink
-//                           active={link.active}
-//                           href={link.href}
-//                           className="text-muted-foreground hover:text-primary py-1.5 font-medium"
-//                         >
-//                           {link.label}
-//                         </NavigationMenuLink>
-//                       </NavigationMenuItem>
-//                     }
-//                     {link.role === data?.data?.role &&
-//                       <NavigationMenuItem key={index}>
-//                         <NavigationMenuLink
-//                           active={link.active}
-//                           href={link.href}
-//                           className="text-muted-foreground hover:text-primary py-1.5 font-medium"
-//                         >
-//                           {link.label}
-//                         </NavigationMenuLink>
-//                       </NavigationMenuItem>
-//                     }
-
-//                   </div>
-//                 ))}
-//               </NavigationMenuList>
-
-
-//             </NavigationMenu>
-//           </div>
-//         </div>
-//         {/* Right side */}
-//         <div className="flex items-center gap-2">
-//           <ModeToggle></ModeToggle>
-//           {
-//             data?.data?.email ?
-//               <Button onClick={handleLogout} asChild size="sm" className="text-sm">
-//                 <Link to={"/login"}>LogOut</Link>
-//               </Button>
-//               :
-//               <Button asChild variant="ghost" size="sm" className="text-sm">
-//                 <Link to={"/login"}>Sign In</Link>
-//               </Button>
-//           }
-
-//           {
-//             data?.data?.email ?
-//               ""
-//               :
-//               <Button asChild size="sm" className="text-sm">
-//                 <Link to={"/register"}>Get Started</Link>
-//               </Button>
-//           }
-
-//         </div>
-//       </div>
-//     </header>
-//   )
-// }
-
-
-// Navbar.tsx
-
-
-     import React from 'react';
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -196,8 +15,9 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { authApi, useLogoutMutation, useUserInfoQuery } from "@/redux/features/auth/auth.api";
 import { useAppDispatch } from "@/redux/hook";
 import { role } from "@/constants/role";
-import { Menu, X } from "lucide-react"; // X icon for mobile menu close button
+import { Menu, X } from "lucide-react";
 import toast from 'react-hot-toast';
+import { useState } from "react";
 
 const navigationLinks = [
   { href: "/", label: "Home", role: "Publish" },
@@ -214,6 +34,7 @@ export default function Navbar() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -236,87 +57,112 @@ export default function Navbar() {
     }
     return location.pathname.startsWith(href);
   };
-  
+
   const filteredLinks = navigationLinks.filter(
     (link) => link.role === "Publish" || link.role === userRole
   );
-  
+
   return (
-    <header className="border-b px-4 md:px-6 container mx-auto">
-      <div className="flex h-16 items-center justify-between gap-4">
-        {/* লোগো এবং বামদিকের নেভিগেশন */}
-        <div className="flex items-center gap-6">
+    <header className="sticky top-0 z-50 w-full border-b bg-gradient-to-r from-white/70 via-gray-50/80 to-blue-50/80 dark:from-gray-950/80 dark:to-blue-950/90 backdrop-blur-md shadow-sm px-2 md:px-6">
+      <div className="container mx-auto flex h-16 items-center justify-between gap-4">
+        {/* Logo & navigation */}
+        <div className="flex items-center gap-4">
           {/* Mobile menu trigger */}
-          <Popover>
+          <Popover open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <PopoverTrigger asChild>
               <Button
-                className="group size-8 md:hidden"
+                className="group size-9 md:hidden"
                 variant="ghost"
                 size="icon"
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               >
-                <Menu className="h-5 w-5 group-aria-expanded:hidden" />
-                <X className="h-5 w-5 hidden group-aria-expanded:block" />
+                <Menu className={`h-6 w-6 ${mobileMenuOpen ? "hidden" : "block"} transition-all`} />
+                <X className={`h-6 w-6 ${mobileMenuOpen ? "block" : "hidden"} transition-all`} />
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="start" className="w-36 p-1 md:hidden">
-              <NavigationMenu className="max-w-none *:w-full">
-                <NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
+            <PopoverContent align="start" className="w-[200px] p-0 md:hidden">
+              <nav>
+                <ul className="flex flex-col gap-1">
                   {filteredLinks.map((link, index) => (
-                    <NavigationMenuItem key={index} className="w-full">
-                      <NavigationMenuLink
-                        asChild
-                        active={isLinkActive(link.href)}
-                        className="py-1.5 font-medium"
+                    <li key={index}>
+                      <Link
+                        to={link.href}
+                        className={`block px-4 py-2 rounded-lg font-medium transition-all ${
+                          isLinkActive(link.href)
+                            ? "bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
+                            : "hover:bg-blue-50 dark:hover:bg-blue-950/40 text-gray-700 dark:text-gray-200"
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
                       >
-                        <Link to={link.href}>
-                          {link.label}
-                        </Link>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
+                        {link.label}
+                      </Link>
+                    </li>
                   ))}
-                </NavigationMenuList>
-              </NavigationMenu>
+                </ul>
+              </nav>
+              <div className="flex flex-col gap-2 p-4 border-t mt-2">
+                {isLoggedIn ? (
+                  <>
+                    <Button asChild size="sm" className="w-full">
+                      <Link to={`/${userRole}/myprofile`}>My Profile</Link>
+                    </Button>
+                    <Button onClick={handleLogout} size="sm" className="w-full">
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button asChild variant="ghost" size="sm" className="w-full">
+                      <Link to="/login">Sign In</Link>
+                    </Button>
+                    <Button asChild size="sm" className="w-full">
+                      <Link to="/register">Get Started</Link>
+                    </Button>
+                  </>
+                )}
+              </div>
             </PopoverContent>
           </Popover>
-          <Link to={"/"}>
-        
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M30 28V12C30 10.8954 29.1046 10 28 10H27.8994C27.369 10 26.8604 10.2109 26.4854 10.5859L10.5859 26.4854C10.2109 26.8604 10 27.369 10 27.8994V40H0V27.8994C2.15312e-05 24.7168 1.26423 21.6645 3.51465 19.4141L19.4141 3.51465C21.6645 1.26423 24.7168 2.1373e-05 27.8994 0H28C34.6274 0 40 5.37258 40 12V28C40 34.6274 34.6274 40 28 40H14V30H28C29.1046 30 30 29.1046 30 28Z M0 0H17L7 10H0V0Z" fill="#FF4D00"></path>
-            </svg>
+          <Link to={"/"} className="flex items-center gap-2">
+            {/* Modern logo style */}
+            <span className="rounded-full bg-gradient-to-br from-orange-400 via-yellow-300 to-blue-400 p-1">
+              <svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+                <path d="M30 28V12C30 10.8954 29.1046 10 28 10H27.8994C27.369 10 26.8604 10.2109 26.4854 10.5859L10.5859 26.4854C10.2109 26.8604 10 27.369 10 27.8994V40H0V27.8994C2.15312e-05 24.7168 1.26423 21.6645 3.51465 19.4141L19.4141 3.51465C21.6645 1.26423 24.7168 2.1373e-05 27.8994 0H28C34.6274 0 40 5.37258 40 12V28C40 34.6274 34.6274 40 28 40H14V30H28C29.1046 30 30 29.1046 30 28Z M0 0H17L7 10H0V0Z" fill="#FF4D00"></path>
+              </svg>
+            </span>
+            <span className="font-bold text-xl md:text-2xl tracking-tight bg-gradient-to-r from-blue-700 to-blue-400 bg-clip-text text-transparent dark:from-blue-300 dark:to-blue-500">
+              Logisti Core
+            </span>
           </Link>
-
-          {/* ডেস্কটপ নেভিগেশন মেনু */}
-          <NavigationMenu className="max-md:hidden">
+          {/* Desktop navigation */}
+          <NavigationMenu className="max-md:hidden ml-8">
             <NavigationMenuList className="gap-2">
               {filteredLinks.map((link, index) => (
                 <NavigationMenuItem key={index}>
                   <NavigationMenuLink
                     asChild
                     active={isLinkActive(link.href)}
-                    className="text-muted-foreground hover:text-primary py-1.5 font-medium"
+                    className={`px-3 py-2 rounded-lg font-medium transition-all ${
+                      isLinkActive(link.href)
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
+                        : "text-muted-foreground hover:bg-blue-50 dark:text-gray-200 dark:hover:bg-blue-950/40"
+                    }`}
                   >
-                    <Link to={link.href}>
-                      {link.label}
-                    </Link>
+                    <Link to={link.href}>{link.label}</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               ))}
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-
-        {/* ডানদিকের উপাদান */}
+        {/* Right side actions */}
         <div className="flex items-center gap-2">
           <ModeToggle />
-          
           {isLoggedIn ? (
             <div className="flex items-center gap-2">
-              {/* My Profile button shown only on desktop */}
-              <div className="max-md:hidden">
-                <Button asChild size="sm" className="text-sm">
-                  <Link to={`/${userRole}/myprofile`}>My Profile</Link>
-                </Button>
-              </div>
+              <Button asChild size="sm" className="max-md:hidden text-sm">
+                <Link to={`/${userRole}/myprofile`}>My Profile</Link>
+              </Button>
               <Button onClick={handleLogout} size="sm" className="text-sm">
                 Logout
               </Button>
