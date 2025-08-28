@@ -31,9 +31,7 @@ export default function Register() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-md bg-white dark:bg-gray-950/80 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl py-10 px-6 md:px-8">
-            <h1 className="text-3xl font-semibold text-center text-blue-700 dark:text-blue-300 mb-6">
-              Create your account
-            </h1>
+           
             <RegisterForm />
             <div className="mt-6 text-center text-gray-500 dark:text-gray-400 text-sm">
               Already have an account?{" "}

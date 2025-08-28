@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate, } from "react-router";
+import { useNavigate, } from "react-router";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegisterMutation } from "@/redux/features/auth/auth.api";
@@ -224,10 +224,10 @@ catch (error: any) {
       </div>
 
       <div className="text-center text-sm">
-        Already have an account?{" "}
-        <Link to="/login" className="underline underline-offset-4">
+        {/* Already have an account?{" "} */}
+        {/* <Link to="/login" className="underline underline-offset-4">
           Login
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
