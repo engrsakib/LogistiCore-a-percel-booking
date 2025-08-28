@@ -50,7 +50,7 @@ const HowItWorks = () => {
               </CardContent>
             </Card>
           ))}
-        </div>
+        </div> 
       </div>
     </section>
   );
