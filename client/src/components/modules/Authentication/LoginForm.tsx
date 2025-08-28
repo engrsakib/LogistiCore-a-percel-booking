@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { useLoginMutation } from "@/redux/features/auth/auth.api";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Link, useNavigate,} from "react-router";
+import { useNavigate,} from "react-router";
 // import { toast } from "sonner";
 // import { toast } from "sonner";
 
@@ -112,10 +112,10 @@ export function LoginForm({
         </Button>
       </div>
       <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
+        {/* Don&apos;t have an account?{" "}
         <Link to="/register" replace className="underline underline-offset-4">
           Register
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
