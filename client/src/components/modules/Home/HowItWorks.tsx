@@ -102,7 +102,7 @@ const HowItWorks = () => {
                   </CardTitle>
                   <p className="text-[#24252A]/70 dark:text-white/70 font-medium">
                     {step.description}
-                  </p>
+                  </p> 
                 </CardContent>
               </Card>
             </div>
