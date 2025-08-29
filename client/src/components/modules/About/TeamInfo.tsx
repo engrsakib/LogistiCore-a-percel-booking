@@ -5,10 +5,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const teamMembers = [
   {
-    name: "Rahim Khan",
+    name: "Fatema Bushra",
     role: "CEO & Founder",
     avatar: "https://randomuser.me/api/portraits/men/4.jpg",
-    bio: "Rahim has over 15 years of experience in logistics and is passionate about solving delivery challenges."
+    bio: "Fatema has over 15 years of experience in logistics and is passionate about solving delivery challenges."
   },
   {
     name: "Shila Ahmed",

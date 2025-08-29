@@ -4,7 +4,7 @@ import TeamInfo from "@/components/modules/About/TeamInfo";
 
 const About = () => {
     return (
-       <main>
+      <main>
       <ServiceDescription />
       <MissionStatement />
       <TeamInfo/>
