@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import {
     ColumnDef,
@@ -30,12 +29,13 @@ import {
     DropdownMenuCheckboxItem,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ChevronDown } from "lucide-react";
+import { MoreHorizontal, ChevronDown, PackageSearch, Inbox } from "lucide-react";
 import { Parcel } from "@/type";
 import { format } from 'date-fns';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
-// Define the columns for your table
+
+// Helper for badge colors
 const getStatusBadgeVariant = (status: string) => {
     switch (status) {
         case "Requested":
@@ -68,7 +68,6 @@ const ViewDeliveryHistory = () => {
     });
 
     const [globalFilter, setGlobalFilter] = React.useState("");
-
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = React.useState(false);
     const [selectedParcelId, setSelectedParcelId] = React.useState<string | null>(null);
 
@@ -76,18 +75,10 @@ const ViewDeliveryHistory = () => {
         skip: !selectedParcelId,
     });
 
-
-
     const tableData = React.useMemo(() => deliveredParcels?.data || [], [deliveredParcels]);
     const columns: ColumnDef<Parcel>[] = [
-        {
-            accessorKey: "trackingId",
-            header: "Tracking ID",
-        },
-        {
-            accessorKey: "parcelType",
-            header: "Parcel Type",
-        },
+        { accessorKey: "trackingId", header: "Tracking ID" },
+        { accessorKey: "parcelType", header: "Parcel Type" },
         {
             accessorKey: "sender.name",
             header: "Sender Name",
@@ -119,30 +110,15 @@ const ViewDeliveryHistory = () => {
             cell: ({ row }) => {
                 const status = row.getValue("currentStatus") as string;
                 const { backgroundColor, textColor } = getStatusBadgeVariant(status);
-
                 return (
-                    <Badge className={`${backgroundColor} ${textColor}`}>
+                    <Badge className={`${backgroundColor} ${textColor} font-semibold text-sm px-3 py-1 rounded-full`}>
                         {status}
                     </Badge>
                 );
             },
         },
-        // {
-        //     accessorKey: "currentStatus",
-        //     header: "Status",
-        //     cell: ({ row }) => {
-        //         const status = row.getValue("currentStatus") as string;
-        //         return <Badge variant="secondary">{status}</Badge>;
-        //     },
-        // },
-        {
-            accessorKey: "weight",
-            header: "Weight (kg)",
-        },
-        {
-            accessorKey: "deliveryAddress",
-            header: "Delivery Address",
-        },
+        { accessorKey: "weight", header: "Weight (kg)" },
+        { accessorKey: "deliveryAddress", header: "Delivery Address" },
         {
             accessorKey: "updatedAt",
             header: "Delivery Date",
@@ -171,9 +147,6 @@ const ViewDeliveryHistory = () => {
                             }}>
                                 View Details
                             </DropdownMenuItem>
-                            {/* <DropdownMenuItem onClick={() => toast.info(`Downloading invoice for ${parcel.trackingId}`)}>
-                            Download Invoice
-                        </DropdownMenuItem> */}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 );
@@ -187,9 +160,7 @@ const ViewDeliveryHistory = () => {
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        state: {
-            globalFilter,
-        },
+        state: { globalFilter },
         onGlobalFilterChange: setGlobalFilter,
         initialState: {
             pagination: {
@@ -199,29 +170,43 @@ const ViewDeliveryHistory = () => {
     });
 
     if (userLoading || parcelsLoading) {
-        return <LoadingSkeleton></LoadingSkeleton>
+        return <LoadingSkeleton />;
     }
 
     if (userError || parcelsError) {
-        return <div className="p-4 text-center text-red-500">Error loading delivery history. Please try again.</div>;
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[300px] gap-4">
+                <Inbox className="w-16 h-16 text-red-500 opacity-70" />
+                <div className="text-xl font-bold text-red-600">Error loading delivery history</div>
+                <span className="text-base text-gray-700 dark:text-gray-300">
+                    Something went wrong. Please refresh or try again later.
+                </span>
+            </div>
+        );
     }
 
-
     const singleParcel = singleParcelData?.data;
-    const singleParcelStatusColors = singleParcel ? getStatusBadgeVariant(singleParcel.currentStatus) : { backgroundColor: "", textColor: "" };
+    const singleParcelStatusColors = singleParcel
+        ? getStatusBadgeVariant(singleParcel.currentStatus)
+        : { backgroundColor: "", textColor: "" };
+
     return (
-        <Card className="p-4">
+        <Card className="p-4 shadow-xl border-0 bg-white/95 dark:bg-gray-950/90 rounded-2xl">
             <CardHeader>
-                <CardTitle>Delivery History</CardTitle>
-                <CardDescription>View a list of all successfully delivered parcels.</CardDescription>
-                <div className="flex items-center py-4 justify-between">
+                <CardTitle className="text-2xl font-extrabold text-orange-700 tracking-tight flex items-center gap-2">
+                    <PackageSearch className="w-7 h-7 text-orange-500" />
+                    Delivery History
+                </CardTitle>
+                <CardDescription className="text-base text-gray-700 dark:text-gray-300">
+                    View a list of all successfully delivered parcels.
+                </CardDescription>
+                <div className="flex items-center py-4 justify-between flex-wrap gap-4">
                     <Input
-                        placeholder="Filter by tracking ID or name..."
+                        placeholder="Filter by tracking ID, name, email..."
                         value={globalFilter ?? ""}
                         onChange={(event) => setGlobalFilter(String(event.target.value))}
                         className="max-w-sm"
                     />
-                    {/* Columns Dropdown Menu */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="ml-auto">
@@ -249,7 +234,7 @@ const ViewDeliveryHistory = () => {
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="rounded-md border">
+                <div className="rounded-md border overflow-x-auto bg-white dark:bg-gray-950">
                     <Table>
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -273,6 +258,7 @@ const ViewDeliveryHistory = () => {
                                     <TableRow
                                         key={row.id}
                                         data-state={row.getIsSelected() && "selected"}
+                                        className="hover:bg-orange-50/60 dark:hover:bg-orange-900/20 transition"
                                     >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell key={cell.id}>
@@ -283,8 +269,16 @@ const ViewDeliveryHistory = () => {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                                        No delivered parcels found.
+                                    <TableCell colSpan={columns.length} className="h-32 text-center">
+                                        <div className="flex flex-col items-center justify-center gap-2 py-6">
+                                            <Inbox className="w-14 h-14 text-gray-400" />
+                                            <span className="text-lg font-semibold text-gray-600 dark:text-gray-400">
+                                                No delivered parcels found
+                                            </span>
+                                            <span className="text-base text-gray-500 dark:text-gray-500">
+                                                You haven’t received any parcels yet. Try updating filters or check later.
+                                            </span>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -311,58 +305,30 @@ const ViewDeliveryHistory = () => {
                 </div>
             </CardContent>
 
-            {/* <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Parcel Details</DialogTitle>
-                        <DialogDescription>
-                            All details for the selected parcel.
-                        </DialogDescription>
-                    </DialogHeader>
-                    {singleParcelLoading ? (
-                        <LoadingSkeleton></LoadingSkeleton>
-                    ) : singleParcel ? (
-                        <div className="space-y-4">
-                            <p><strong>Tracking ID:</strong> {singleParcel.trackingId}</p>
-                            <p><strong>Status:</strong> <Badge variant={(singleParcel.currentStatus)}>{singleParcel.currentStatus}</Badge></p>
-                            <p><strong>Parcel Type:</strong> {singleParcel.parcelType}</p>
-                            <p><strong>Weight:</strong> {singleParcel.weight} kg</p>
-                            <p><strong>Delivery Address:</strong> {singleParcel.deliveryAddress}</p>
-                            <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Sender Details</h4>
-                            <p><strong>Name:</strong> {singleParcel.sender.name}</p>
-                            <p><strong>Email:</strong> {singleParcel.sender.email}</p>
-                            <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Receiver Details</h4>
-                            <p><strong>Name:</strong> {singleParcel.receiver.name}</p>
-                            <p><strong>Email:</strong> {singleParcel.receiver.email}</p>
-                            <p><strong>Phone:</strong> {singleParcel.receiver.phone}</p>
-                            <p><strong>Address:</strong> {singleParcel.receiver.address}</p>
-                        </div>
-                    ) : (
-                        <div>Parcel details could not be loaded.</div>
-                    )}
-                </DialogContent>
-            </Dialog> */}
-
-
+            {/* Parcel Details Dialog */}
             <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Parcel Details</DialogTitle>
+                        <DialogTitle>
+                            <span className="flex items-center gap-2">
+                                <PackageSearch className="w-5 h-5 text-orange-500" />
+                                Parcel Details
+                            </span>
+                        </DialogTitle>
                         <DialogDescription>
                             All details for the selected parcel.
                         </DialogDescription>
                     </DialogHeader>
                     {singleParcelLoading ? (
-                        <LoadingSkeleton></LoadingSkeleton>
+                        <LoadingSkeleton />
                     ) : singleParcel ? (
-                        <div className="space-y-4">
-                            <p><strong>Tracking ID:</strong> {singleParcel.trackingId}</p>
-                            {/* এখানে className দিয়ে ডাইনামিক কালার যোগ করা হয়েছে */}
+                        <div className="space-y-4 text-base">
+                            <p>
+                                <strong>Tracking ID:</strong> {singleParcel.trackingId}
+                            </p>
                             <p>
                                 <strong>Status:</strong>
-                                <Badge className={`${singleParcelStatusColors.backgroundColor} ${singleParcelStatusColors.textColor}`}>
+                                <Badge className={`${singleParcelStatusColors.backgroundColor} ${singleParcelStatusColors.textColor} ml-2`}>
                                     {singleParcel.currentStatus}
                                 </Badge>
                             </p>
@@ -370,18 +336,23 @@ const ViewDeliveryHistory = () => {
                             <p><strong>Weight:</strong> {singleParcel.weight} kg</p>
                             <p><strong>Delivery Address:</strong> {singleParcel.deliveryAddress}</p>
                             <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Sender Details</h4>
+                            <h4 className="font-semibold text-orange-700">Sender Details</h4>
                             <p><strong>Name:</strong> {singleParcel.sender?.name}</p>
                             <p><strong>Email:</strong> {singleParcel.sender?.email}</p>
                             <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Receiver Details</h4>
+                            <h4 className="font-semibold text-orange-700">Receiver Details</h4>
                             <p><strong>Name:</strong> {singleParcel.receiver?.name}</p>
                             <p><strong>Email:</strong> {singleParcel.receiver?.email}</p>
                             <p><strong>Phone:</strong> {singleParcel.receiver?.phone}</p>
                             <p><strong>Address:</strong> {singleParcel.receiver?.address}</p>
                         </div>
                     ) : (
-                        <div>Parcel details could not be loaded.</div>
+                        <div className="flex flex-col items-center justify-center min-h-[120px] gap-2">
+                            <Inbox className="w-8 h-8 text-gray-400" />
+                            <span className="text-base text-gray-600 dark:text-gray-400">
+                                Parcel details could not be loaded.
+                            </span>
+                        </div>
                     )}
                 </DialogContent>
             </Dialog>
@@ -390,6 +361,3 @@ const ViewDeliveryHistory = () => {
 };
 
 export default ViewDeliveryHistory;
-
-
-
