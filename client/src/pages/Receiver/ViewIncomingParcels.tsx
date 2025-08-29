@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import {
     ColumnDef,
@@ -25,43 +24,16 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
     DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu";
-import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ChevronDown, } from "lucide-react";
-
+import { MoreHorizontal, ChevronDown, Inbox, PackageSearch } from "lucide-react";
 import { Parcel } from "@/type";
 import toast from "react-hot-toast";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
-// This type definition must be consistent across all files
-// type Parcel = { ... }
-
-// const getStatusBadgeVariant = (status: string) => {
-//     switch (status) {
-//         case "Requested":
-//             return "default";
-//         case "Delivered":
-//             return "secondary";
-//         case "Cancelled":
-//         case "Returned":
-//         case "Held":
-//             return "destructive";
-//         case "Approved":
-//         case "Dispatched":
-//         case "In Transit":
-//         case "Picked":
-//             return "default";
-//         default:
-//             return "outline";
-//     }
-// };
 
 const getStatusBadgeVariant = (status: string) => {
     switch (status) {
@@ -87,13 +59,9 @@ const getStatusBadgeVariant = (status: string) => {
 };
 
 const ViewIncomingParcels = () => {
-    // Hooks must be called inside the component
     const { data: allParcels, isLoading, isError } = useGetIncomingParcelsQuery(undefined);
     const [cancelParcel] = useConfirmParcelMutation();
     const [globalFilter, setGlobalFilter] = React.useState("");
-
-
-
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = React.useState(false);
     const [selectedParcelId, setSelectedParcelId] = React.useState<string | null>(null);
 
@@ -101,10 +69,6 @@ const ViewIncomingParcels = () => {
         skip: !selectedParcelId,
     });
 
-
-
-
-    // --- New handler functions ---
     const handleCancel = async (parcelId: string) => {
         try {
             await cancelParcel(parcelId).unwrap();
@@ -115,30 +79,11 @@ const ViewIncomingParcels = () => {
         }
     };
 
-    // const handleEdit = (parcelId: string) => {
-    //     alert(`Edit parcel with ID: ${parcelId}`);
-    // };
-
-    // const handleDelete = (parcelId: string) => {
-    //     alert(`Delete parcel with ID: ${parcelId}`);
-    // };
-
-
-
-
-
     const tableData = React.useMemo(() => allParcels?.data?.data || [], [allParcels]);
 
-    // Define columns inside the component to access state and handlers
     const columns: ColumnDef<Parcel>[] = [
-        {
-            accessorKey: "trackingId",
-            header: "Tracking ID",
-        },
-        {
-            accessorKey: "parcelType",
-            header: "Parcel Type",
-        },
+        { accessorKey: "trackingId", header: "Tracking ID" },
+        { accessorKey: "parcelType", header: "Parcel Type" },
         {
             accessorKey: "sender.name",
             header: "Sender Name",
@@ -164,39 +109,21 @@ const ViewIncomingParcels = () => {
             header: "Receiver Phone",
             cell: ({ row }) => <span>{row.original.receiver?.phone}</span>,
         },
-
         {
             accessorKey: "currentStatus",
             header: "Status",
             cell: ({ row }) => {
                 const status = row.getValue("currentStatus") as string;
                 const { backgroundColor, textColor } = getStatusBadgeVariant(status);
-
                 return (
-                    <Badge className={`${backgroundColor} ${textColor}`}>
+                    <Badge className={`${backgroundColor} ${textColor} font-semibold text-sm px-3 py-1 rounded-full`}>
                         {status}
                     </Badge>
                 );
             },
         },
-
-        // {
-        //     accessorKey: "currentStatus",
-        //     header: "Status",
-        //     cell: ({ row }) => {
-        //         const status = row.getValue("currentStatus") as string;
-        //         return <Badge variant={getStatusBadgeVariant(status)}>{status}</Badge>;
-        //     },
-        // },
-
-        {
-            accessorKey: "weight",
-            header: "Weight (kg)",
-        },
-        {
-            accessorKey: "deliveryAddress",
-            header: "Delivery Address",
-        },
+        { accessorKey: "weight", header: "Weight (kg)" },
+        { accessorKey: "deliveryAddress", header: "Delivery Address" },
         {
             accessorKey: "isBlocked",
             header: "Block Status",
@@ -220,34 +147,16 @@ const ViewIncomingParcels = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
                             <DropdownMenuItem onClick={() => {
                                 setSelectedParcelId(parcel._id);
                                 setIsDetailsDialogOpen(true);
                             }}>
                                 View Details
                             </DropdownMenuItem>
-
-                            {/* Only show 'Cancel Parcel' for 'Requested' or 'Approved' status */}
-                            {/* {(parcel.currentStatus === 'Requested' || parcel.currentStatus === 'Approved') && (
-                                <DropdownMenuItem onClick={() => handleCancel(parcel._id)}>
-                                    Cancel Parcel
-                                </DropdownMenuItem>
-                            )} */}
-
                             <DropdownMenuItem onClick={() => handleCancel(parcel._id)}>
                                 Confirm Parcel
                             </DropdownMenuItem>
-
                             <DropdownMenuSeparator />
-
-                            {/* Other action buttons */}
-                            {/* <DropdownMenuItem onClick={() => handleEdit(parcel._id)}>
-                                <Edit className="mr-2 h-4 w-4" /> Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(parcel._id)}>
-                                <Trash className="mr-2 h-4 w-4" /> Delete
-                            </DropdownMenuItem> */}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 );
@@ -261,9 +170,7 @@ const ViewIncomingParcels = () => {
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        state: {
-            globalFilter,
-        },
+        state: { globalFilter },
         onGlobalFilterChange: setGlobalFilter,
         initialState: {
             pagination: {
@@ -273,22 +180,37 @@ const ViewIncomingParcels = () => {
     });
 
     if (isLoading) {
-        return <LoadingSkeleton></LoadingSkeleton>
+        return <LoadingSkeleton />;
     }
 
     if (isError) {
-        return <div className="p-4 text-center text-red-500">Error loading parcels. Please try again later.</div>;
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
+                <Inbox className="w-16 h-16 text-red-500 opacity-70" />
+                <div className="text-xl font-bold text-red-600">Error loading parcels</div>
+                <span className="text-base text-gray-700 dark:text-gray-300">
+                    Something went wrong. Please refresh or try again later.
+                </span>
+            </div>
+        );
     }
 
     const singleParcel = singleParcelData?.data;
-    const singleParcelStatusColors = singleParcel ? getStatusBadgeVariant(singleParcel.currentStatus) : { backgroundColor: "", textColor: "" };
+    const singleParcelStatusColors = singleParcel
+        ? getStatusBadgeVariant(singleParcel.currentStatus)
+        : { backgroundColor: "", textColor: "" };
 
     return (
-        <Card className="p-4">
+        <Card className="p-4 shadow-xl border-0 bg-white/95 dark:bg-gray-950/90 rounded-2xl">
             <CardHeader>
-                <CardTitle>All Parcels</CardTitle>
-                <CardDescription>Manage all incoming and outgoing parcels.</CardDescription>
-                <div className="flex items-center py-4 justify-between">
+                <CardTitle className="text-2xl font-extrabold text-orange-700 tracking-tight flex items-center gap-2">
+                    <PackageSearch className="w-7 h-7 text-orange-500" />
+                    All Parcels
+                </CardTitle>
+                <CardDescription className="text-base text-gray-700 dark:text-gray-300">
+                    Manage all incoming and outgoing parcels.
+                </CardDescription>
+                <div className="flex items-center py-4 justify-between flex-wrap gap-4">
                     <Input
                         placeholder="Filter by name or tracking ID..."
                         value={globalFilter ?? ""}
@@ -322,7 +244,7 @@ const ViewIncomingParcels = () => {
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="rounded-md border">
+                <div className="rounded-md border overflow-x-auto bg-white dark:bg-gray-950 min-h-[500px]">
                     <Table>
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -346,6 +268,7 @@ const ViewIncomingParcels = () => {
                                     <TableRow
                                         key={row.id}
                                         data-state={row.getIsSelected() && "selected"}
+                                        className="hover:bg-orange-50/60 dark:hover:bg-orange-900/20 transition"
                                     >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell key={cell.id}>
@@ -356,8 +279,16 @@ const ViewIncomingParcels = () => {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                                        No results.
+                                    <TableCell colSpan={columns.length} className="h-32 text-center">
+                                        <div className="flex flex-col items-center justify-center min-h-[450px] gap-2 py-6">
+                                            <Inbox className="w-14 h-14 text-gray-400" />
+                                            <span className="text-lg font-semibold text-gray-600 dark:text-gray-400">
+                                                No parcels found
+                                            </span>
+                                            <span className="text-base text-gray-500 dark:text-gray-500">
+                                                You haven’t received any parcels yet. Try updating filters or check later.
+                                            </span>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -383,41 +314,6 @@ const ViewIncomingParcels = () => {
                     </Button>
                 </div>
             </CardContent>
-            {/* <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Parcel Details</DialogTitle>
-                        <DialogDescription>
-                            All details for the selected parcel.
-                        </DialogDescription>
-                    </DialogHeader>
-                    {singleParcelLoading ? (
-                        <LoadingSkeleton></LoadingSkeleton>
-                    ) : singleParcel ? (
-                        <div className="space-y-4">
-                            <p><strong>Tracking ID:</strong> {singleParcel.trackingId}</p>
-                            <p><strong>Status:</strong> <Badge variant={getStatusBadgeVariant(singleParcel.currentStatus)}>{singleParcel.currentStatus}</Badge></p>
-                            <p><strong>Parcel Type:</strong> {singleParcel.parcelType}</p>
-                            <p><strong>Weight:</strong> {singleParcel.weight} kg</p>
-                            <p><strong>Delivery Address:</strong> {singleParcel.deliveryAddress}</p>
-                            <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Sender Details</h4>
-                            <p><strong>Name:</strong> {singleParcel.sender.name}</p>
-                            <p><strong>Email:</strong> {singleParcel.sender.email}</p>
-                            <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Receiver Details</h4>
-                            <p><strong>Name:</strong> {singleParcel.receiver.name}</p>
-                            <p><strong>Email:</strong> {singleParcel.receiver.email}</p>
-                            <p><strong>Phone:</strong> {singleParcel.receiver.phone}</p>
-                            <p><strong>Address:</strong> {singleParcel.receiver.address}</p>
-                        </div>
-                    ) : (
-                        <div>Parcel details could not be loaded.</div>
-                    )}
-                </DialogContent>
-            </Dialog> */}
-
-
             <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -427,11 +323,10 @@ const ViewIncomingParcels = () => {
                         </DialogDescription>
                     </DialogHeader>
                     {singleParcelLoading ? (
-                        <LoadingSkeleton></LoadingSkeleton>
+                        <LoadingSkeleton />
                     ) : singleParcel ? (
                         <div className="space-y-4">
                             <p><strong>Tracking ID:</strong> {singleParcel.trackingId}</p>
-                            {/* এখানে className দিয়ে ডাইনামিক কালার যোগ করা হয়েছে */}
                             <p>
                                 <strong>Status:</strong>
                                 <Badge className={`${singleParcelStatusColors.backgroundColor} ${singleParcelStatusColors.textColor}`}>
@@ -453,14 +348,17 @@ const ViewIncomingParcels = () => {
                             <p><strong>Address:</strong> {singleParcel.receiver?.address}</p>
                         </div>
                     ) : (
-                        <div>Parcel details could not be loaded.</div>
+                        <div className="flex flex-col items-center justify-center min-h-[120px] gap-2">
+                            <Inbox className="w-8 h-8 text-gray-400" />
+                            <span className="text-base text-gray-600 dark:text-gray-400">
+                                Parcel details could not be loaded.
+                            </span>
+                        </div>
                     )}
                 </DialogContent>
             </Dialog>
-
         </Card>
     );
 };
 
 export default ViewIncomingParcels;
-
