@@ -85,8 +85,8 @@ const Footer = () => {
             <ul className="space-y-2 text-muted-foreground">
               <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">Careers</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">Terms of Service</Link></li>
+              <li><Link to="/careers" className="hover:text-primary transition-colors">Careers</Link></li>
+              <li><Link to="/terms-service" className="hover:text-primary transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
 
@@ -94,9 +94,9 @@ const Footer = () => {
           <div className="text-center md:text-left">
             <h3 className="font-bold text-lg mb-4">Support</h3>
             <ul className="space-y-2 text-muted-foreground">
-              <li><Link to="#" className="hover:text-primary transition-colors">FAQ</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">Help Center</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">Live Chat</Link></li>
+              <li><Link to="/frequently-asked-questions" className="hover:text-primary transition-colors">FAQ</Link></li>
+              <li><Link to="/help-center" className="hover:text-primary transition-colors">Help Center</Link></li>
+              {/* <li><Link to="#" className="hover:text-primary transition-colors">Live Chat</Link></li> */}
             </ul>
           </div>
         </div>
