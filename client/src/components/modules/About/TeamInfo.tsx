@@ -35,6 +35,30 @@ const teamMembers = [
     avatar: "https://github.com/engrsakib/LogistiCore-a-percel-booking/blob/clientDev/client/public/umaiya.jpg?raw=true",
     bio: "UT MIM is the mastermind behind our advanced tracking system and user-friendly web platform.",
   },
+  {
+    name: "Mohammad Anik",
+    role: "Head Of Logistics",
+    avatar: "https://github.com/engrsakib/LogistiCore-a-percel-booking/blob/clientDev/client/public/anik.jpg?raw=true",
+    bio: "Mohammad Anik is the mastermind behind our advanced tracking system and user-friendly web platform.",
+  },
+  {
+    name: "Sumiaya K Afra",
+    role: "Head Of Marketing",
+    avatar: "https://abayaandgown.com/wp-content/uploads/2023/08/Borkha-Unlimited-Hijab1.jpg",
+    bio: "Sumiaya K Afra is the mastermind behind our advanced tracking system and user-friendly web platform.",
+  },
+  {
+    name: "Arif Hossina khan",
+    role: "Head of HR and Administration",
+    avatar: "https://static.vecteezy.com/system/resources/thumbnails/005/346/410/small_2x/close-up-portrait-of-smiling-handsome-young-caucasian-man-face-looking-at-camera-on-isolated-light-gray-studio-background-photo.jpg",
+    bio: "Arif Hossina khan is the mastermind behind our advanced tracking system and user-friendly web platform.",
+  },
+  {
+    name: "Rafya Islam arman",
+    role: "Head of IT",
+    avatar: "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?semt=ais_hybrid&w=740&q=80",
+    bio: "Rafya Islam arman is the mastermind behind our advanced tracking system and user-friendly web platform.",
+  },
 ];
 
 const TeamCard: React.FC<{ member: typeof teamMembers[0] }> = ({ member }) => {
