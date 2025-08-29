@@ -40,7 +40,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ChevronDown, Edit, Trash, Inbox } from "lucide-react";
+import { MoreHorizontal, ChevronDown, Edit, Trash, Inbox, XCircle, Package } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -224,13 +224,13 @@ const ViewAllCreatedParcels = () => {
                             </DropdownMenuItem>
                             {(parcel.currentStatus === 'Requested' || parcel.currentStatus === 'Approved') && (
                                 <DropdownMenuItem onClick={() => handleCancel(parcel._id)}>
-                                    Cancel Parcel
+                                    <XCircle className="mr-2 h-4 w-4 text-red-500" /> Cancel Parcel
                                 </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
                             {canEditOrDelete && (
                                 <DropdownMenuItem onClick={() => handleEdit(parcel)}>
-                                    <Edit className="mr-2 h-4 w-4" /> Edit
+                                    <Edit className="mr-2 h-4 w-4 text-blue-500" /> Edit
                                 </DropdownMenuItem>
                             )}
                             {canEditOrDelete && (
@@ -241,7 +241,7 @@ const ViewAllCreatedParcels = () => {
                                         setParcelToDeleteId(parcel._id);
                                     }}
                                 >
-                                    <Trash className="mr-2 h-4 w-4" /> Delete
+                                    <Trash className="mr-2 h-4 w-4 text-red-500" /> Delete
                                 </DropdownMenuItem>
                             )}
                         </DropdownMenuContent>
@@ -264,18 +264,22 @@ const ViewAllCreatedParcels = () => {
     });
 
     // Loading state
-    if (isLoading) return <LoadingSkeleton />;
+    if (isLoading) return (
+        <Card className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950">
+            <LoadingSkeleton />
+        </Card>
+    );
 
     // Error state
     if (isError) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
+            <Card className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white dark:bg-gray-950 rounded-2xl p-6">
                 <Inbox className="w-16 h-16 text-red-500 opacity-70" />
                 <div className="text-xl font-bold text-red-600">Error loading parcels</div>
                 <span className="text-base text-gray-700 dark:text-gray-300">
                     Something went wrong. Please refresh or try again later.
                 </span>
-            </div>
+            </Card>
         );
     }
 
@@ -285,11 +289,14 @@ const ViewAllCreatedParcels = () => {
         : { backgroundColor: "", textColor: "" };
 
     return (
-        <Card className="p-4 shadow-xl border-0 bg-white/95 dark:bg-gray-950/90 rounded-2xl">
+        <Card className="min-h-screen p-4 shadow-xl border-0 bg-white/95 dark:bg-gray-950/90 rounded-2xl">
             <CardHeader>
-                <CardTitle className="text-2xl font-extrabold text-orange-700 tracking-tight">
-                    All Parcels
-                </CardTitle>
+                <div className="flex items-center gap-2 mb-2">
+                    <Package className="w-8 h-8 text-orange-500" />
+                    <CardTitle className="text-2xl font-extrabold text-orange-700 tracking-tight">
+                        All Parcels
+                    </CardTitle>
+                </div>
                 <CardDescription className="text-base text-gray-700 dark:text-gray-300">
                     Manage all incoming and outgoing parcels.
                 </CardDescription>
@@ -400,9 +407,12 @@ const ViewAllCreatedParcels = () => {
 
             {/* Details Dialog */}
             <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[450px] rounded-2xl border-0 bg-white dark:bg-gray-950 p-6">
                     <DialogHeader>
-                        <DialogTitle>Parcel Details</DialogTitle>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Package className="w-7 h-7 text-orange-500" />
+                            <DialogTitle className="text-xl font-bold text-orange-700">Parcel Details</DialogTitle>
+                        </div>
                         <DialogDescription>
                             All details for the selected parcel.
                         </DialogDescription>
@@ -410,27 +420,43 @@ const ViewAllCreatedParcels = () => {
                     {singleParcelLoading ? (
                         <LoadingSkeleton />
                     ) : singleParcel ? (
-                        <div className="space-y-4">
-                            <p><strong>Tracking ID:</strong> {singleParcel.trackingId}</p>
-                            <p>
-                                <strong>Status:</strong>
+                        <div className="space-y-4 pt-2">
+                            <div className="flex flex-row gap-2 items-center">
+                                <span className="font-semibold text-gray-600 dark:text-gray-200">Tracking ID:</span>
+                                <span className="text-base font-mono rounded bg-gray-100 dark:bg-gray-800 px-2">{singleParcel.trackingId}</span>
+                            </div>
+                            <div className="flex flex-row gap-2 items-center">
+                                <span className="font-semibold text-gray-600 dark:text-gray-200">Status:</span>
                                 <Badge className={`${singleParcelStatusColors.backgroundColor} ${singleParcelStatusColors.textColor}`}>
                                     {singleParcel.currentStatus}
                                 </Badge>
-                            </p>
-                            <p><strong>Parcel Type:</strong> {singleParcel.parcelType}</p>
-                            <p><strong>Weight:</strong> {singleParcel.weight} kg</p>
-                            <p><strong>Delivery Address:</strong> {singleParcel.deliveryAddress}</p>
+                            </div>
+                            <div className="flex flex-row gap-2 items-center">
+                                <span className="font-semibold text-gray-600 dark:text-gray-200">Parcel Type:</span>
+                                <span>{singleParcel.parcelType}</span>
+                            </div>
+                            <div className="flex flex-row gap-2 items-center">
+                                <span className="font-semibold text-gray-600 dark:text-gray-200">Weight:</span>
+                                <span>{singleParcel.weight} kg</span>
+                            </div>
+                            <div className="flex flex-row gap-2 items-center">
+                                <span className="font-semibold text-gray-600 dark:text-gray-200">Delivery Address:</span>
+                                <span>{singleParcel.deliveryAddress}</span>
+                            </div>
                             <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Sender Details</h4>
-                            <p><strong>Name:</strong> {singleParcel.sender?.name}</p>
-                            <p><strong>Email:</strong> {singleParcel.sender?.email}</p>
+                            <h4 className="font-semibold mt-4 text-orange-700 dark:text-orange-300">Sender Details</h4>
+                            <div className="flex flex-col gap-1 ml-2">
+                                <span><span className="font-semibold">Name:</span> {singleParcel.sender?.name}</span>
+                                <span><span className="font-semibold">Email:</span> {singleParcel.sender?.email}</span>
+                            </div>
                             <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Receiver Details</h4>
-                            <p><strong>Name:</strong> {singleParcel.receiver?.name}</p>
-                            <p><strong>Email:</strong> {singleParcel.receiver?.email}</p>
-                            <p><strong>Phone:</strong> {singleParcel.receiver?.phone}</p>
-                            <p><strong>Address:</strong> {singleParcel.receiver?.address}</p>
+                            <h4 className="font-semibold mt-4 text-orange-700 dark:text-orange-300">Receiver Details</h4>
+                            <div className="flex flex-col gap-1 ml-2">
+                                <span><span className="font-semibold">Name:</span> {singleParcel.receiver?.name}</span>
+                                <span><span className="font-semibold">Email:</span> {singleParcel.receiver?.email}</span>
+                                <span><span className="font-semibold">Phone:</span> {singleParcel.receiver?.phone}</span>
+                                <span><span className="font-semibold">Address:</span> {singleParcel.receiver?.address}</span>
+                            </div>
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center min-h-[120px] gap-2">
@@ -445,9 +471,12 @@ const ViewAllCreatedParcels = () => {
 
             {/* Edit Dialog */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                <DialogContent className="sm:max-w-2xl">
+                <DialogContent className="sm:max-w-2xl rounded-2xl border-0 bg-white dark:bg-gray-950 p-6">
                     <DialogHeader>
-                        <DialogTitle>Edit Parcel</DialogTitle>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Edit className="w-6 h-6 text-blue-500" />
+                            <DialogTitle>Edit Parcel</DialogTitle>
+                        </div>
                     </DialogHeader>
                     {selectedParcelToEdit ? (
                         <ParcelEditForm
@@ -462,15 +491,20 @@ const ViewAllCreatedParcels = () => {
 
             {/* Delete Confirmation Dialog */}
             <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                <AlertDialogContent>
+                <AlertDialogContent className="rounded-2xl border-0 bg-white dark:bg-gray-950 p-6">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Trash className="w-6 h-6 text-red-500" />
+                            <AlertDialogTitle className="text-lg font-bold text-red-600">Are you absolutely sure?</AlertDialogTitle>
+                        </div>
+                        <AlertDialogDescription className="text-base text-gray-700 dark:text-gray-300">
                             This action cannot be undone. This will permanently delete this parcel.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+                            Cancel
+                        </AlertDialogCancel>
                         <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
                             {isDeleting ? "Deleting..." : "Continue"}
                         </AlertDialogAction>
