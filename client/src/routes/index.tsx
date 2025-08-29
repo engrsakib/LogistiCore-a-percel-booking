@@ -19,6 +19,7 @@ import Home from "@/pages/Home";
 import Contact from "@/pages/Contact";
 import Careers from "@/pages/Careers";
 import TermsOfService from "@/pages/TermsService";
+import FAQ from "@/pages/FAQ";
 
 export const router = createBrowserRouter([
 
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
             {
                 path: "terms-service",
                 Component: TermsOfService,
+            },
+            {
+                path: "frequently-asked-questions",
+                Component: FAQ,
             },
             
         ],
