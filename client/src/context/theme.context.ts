@@ -6,8 +6,9 @@ type ThemeProviderState = {
   setTheme: (theme: Theme) => void;
 };
 
+// Default theme is "light"
 const initialState: ThemeProviderState = {
-  theme: "system",
+  theme: "light",
   setTheme: () => null,
 };
 
