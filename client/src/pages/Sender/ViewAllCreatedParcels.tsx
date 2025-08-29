@@ -1,5 +1,3 @@
-
-
 import * as React from "react";
 import {
     ColumnDef,
@@ -20,23 +18,36 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useCancelParcelMutation, useDeleteParcelMutation, useGetMyParcelsQuery, useGetSingleParcelQuery } from "@/redux/features/auth/auth.api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    useCancelParcelMutation,
+    useDeleteParcelMutation,
+    useGetMyParcelsQuery,
+    useGetSingleParcelQuery,
+} from "@/redux/features/auth/auth.api";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
     DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu";
-import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ChevronDown, Edit, Trash } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { MoreHorizontal, ChevronDown, Edit, Trash, Inbox } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -52,25 +63,7 @@ import toast from "react-hot-toast";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { ParcelEditForm } from "../Sender/ParcelEditForm";
 
-// const getStatusBadgeVariant = (status: string) => {
-//     switch (status) {
-//         case "Requested":
-//             return "default";
-//         case "Delivered":
-//             return "secondary";
-//         case "Cancelled":
-//         case "Returned":
-//         case "Held":
-//             return "destructive";
-//         case "Approved":
-//         case "Dispatched":
-//         case "In Transit":
-//         case "Picked":
-//             return "default";
-//         default:
-//             return "outline";
-//     }
-// };
+// Badge color helper
 const getStatusBadgeVariant = (status: string) => {
     switch (status) {
         case "Requested":
@@ -93,26 +86,32 @@ const getStatusBadgeVariant = (status: string) => {
             return { backgroundColor: "bg-gray-100 dark:bg-gray-800", textColor: "text-gray-500 dark:text-gray-400" };
     }
 };
+
 const ViewAllCreatedParcels = () => {
-    // Hooks must be called inside the component
+    // Dialog states
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = React.useState(false);
     const [selectedParcelId, setSelectedParcelId] = React.useState<string | null>(null);
 
     const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
     const [selectedParcelToEdit, setSelectedParcelToEdit] = React.useState<Parcel | null>(null);
 
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+    const [parcelToDeleteId, setParcelToDeleteId] = React.useState<string | null>(null);
+
+    // API hooks
     const { data: singleParcelData, isLoading: singleParcelLoading } = useGetSingleParcelQuery(selectedParcelId, {
         skip: !selectedParcelId,
     });
-
-    
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
-    const [parcelToDeleteId, setParcelToDeleteId] = React.useState<string | null>(null);
     const [deleteParcel, { isLoading: isDeleting }] = useDeleteParcelMutation();
+    const { data: allParcels, isLoading, isError } = useGetMyParcelsQuery(undefined);
+    const [cancelParcel] = useCancelParcelMutation();
 
+    // Table filter
+    const [globalFilter, setGlobalFilter] = React.useState("");
+
+    // Delete handler
     const handleDelete = async () => {
         if (!parcelToDeleteId) return;
-
         try {
             await deleteParcel(parcelToDeleteId).unwrap();
             toast.success("Parcel deleted successfully! 🗑️");
@@ -125,10 +124,7 @@ const ViewAllCreatedParcels = () => {
         }
     };
 
-    const { data: allParcels, isLoading, isError } = useGetMyParcelsQuery(undefined);
-    const [cancelParcel] = useCancelParcelMutation();
-    const [globalFilter, setGlobalFilter] = React.useState("");
-
+    // Cancel handler
     const handleCancel = async (parcelId: string) => {
         try {
             await cancelParcel(parcelId).unwrap();
@@ -139,27 +135,23 @@ const ViewAllCreatedParcels = () => {
         }
     };
 
+    // Edit handler
     const handleEdit = (parcel: Parcel) => {
         setSelectedParcelToEdit(parcel);
         setIsEditDialogOpen(true);
     };
-
     const handleEditSuccess = () => {
         setIsEditDialogOpen(false);
         setSelectedParcelToEdit(null);
     };
 
+    // Table data
     const tableData = React.useMemo(() => allParcels?.data?.data || [], [allParcels]);
 
+    // Columns
     const columns: ColumnDef<Parcel>[] = [
-        {
-            accessorKey: "trackingId",
-            header: "Tracking ID",
-        },
-        {
-            accessorKey: "parcelType",
-            header: "Parcel Type",
-        },
+        { accessorKey: "trackingId", header: "Tracking ID" },
+        { accessorKey: "parcelType", header: "Parcel Type" },
         {
             accessorKey: "sender.name",
             header: "Sender Name",
@@ -185,37 +177,21 @@ const ViewAllCreatedParcels = () => {
             header: "Receiver Phone",
             cell: ({ row }) => <span>{row.original.receiver?.phone}</span>,
         },
-
         {
             accessorKey: "currentStatus",
             header: "Status",
             cell: ({ row }) => {
                 const status = row.getValue("currentStatus") as string;
                 const { backgroundColor, textColor } = getStatusBadgeVariant(status);
-
                 return (
-                    <Badge className={`${backgroundColor} ${textColor}`}>
+                    <Badge className={`${backgroundColor} ${textColor} font-semibold text-sm px-3 py-1 rounded-full`}>
                         {status}
                     </Badge>
                 );
             },
         },
-        // {
-        //     accessorKey: "currentStatus",
-        //     header: "Status",
-        //     cell: ({ row }) => {
-        //         const status = row.getValue("currentStatus") as string;
-        //         return <Badge variant={getStatusBadgeVariant(status)}>{status}</Badge>;
-        //     },
-        // },
-        {
-            accessorKey: "weight",
-            header: "Weight (kg)",
-        },
-        {
-            accessorKey: "deliveryAddress",
-            header: "Delivery Address",
-        },
+        { accessorKey: "weight", header: "Weight (kg)" },
+        { accessorKey: "deliveryAddress", header: "Delivery Address" },
         {
             accessorKey: "isBlocked",
             header: "Block Status",
@@ -230,92 +206,94 @@ const ViewAllCreatedParcels = () => {
             cell: ({ row }) => {
                 const parcel = row.original;
                 const canEditOrDelete = parcel.currentStatus === "Requested" || parcel.currentStatus === "Cancelled";
-
                 return (
-                    <>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">Open menu</span>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem onClick={() => {
-                                    setSelectedParcelId(parcel._id);
-                                    setIsDetailsDialogOpen(true);
-                                }}>
-                                    View Details
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => {
+                                setSelectedParcelId(parcel._id);
+                                setIsDetailsDialogOpen(true);
+                            }}>
+                                View Details
+                            </DropdownMenuItem>
+                            {(parcel.currentStatus === 'Requested' || parcel.currentStatus === 'Approved') && (
+                                <DropdownMenuItem onClick={() => handleCancel(parcel._id)}>
+                                    Cancel Parcel
                                 </DropdownMenuItem>
-
-                                {(parcel.currentStatus === 'Requested' || parcel.currentStatus === 'Approved') && (
-                                    <DropdownMenuItem onClick={() => handleCancel(parcel._id)}>
-                                        Cancel Parcel
-                                    </DropdownMenuItem>
-                                )}
-
-                                <DropdownMenuSeparator />
-
-                                {canEditOrDelete && (
-                                    <DropdownMenuItem onClick={() => handleEdit(parcel)}>
-                                        <Edit className="mr-2 h-4 w-4" /> Edit
-                                    </DropdownMenuItem>
-                                )}
-
-                                {canEditOrDelete && (
-                                    <DropdownMenuItem
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            setIsDeleteDialogOpen(true);
-                                            setParcelToDeleteId(parcel._id);
-                                        }}
-                                    >
-                                        <Trash className="mr-2 h-4 w-4" /> Delete
-                                    </DropdownMenuItem>
-                                )}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </>
+                            )}
+                            <DropdownMenuSeparator />
+                            {canEditOrDelete && (
+                                <DropdownMenuItem onClick={() => handleEdit(parcel)}>
+                                    <Edit className="mr-2 h-4 w-4" /> Edit
+                                </DropdownMenuItem>
+                            )}
+                            {canEditOrDelete && (
+                                <DropdownMenuItem
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsDeleteDialogOpen(true);
+                                        setParcelToDeleteId(parcel._id);
+                                    }}
+                                >
+                                    <Trash className="mr-2 h-4 w-4" /> Delete
+                                </DropdownMenuItem>
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 );
             },
         },
     ];
 
+    // Table instance
     const table = useReactTable({
         data: tableData,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        state: {
-            globalFilter,
-        },
+        state: { globalFilter },
         onGlobalFilterChange: setGlobalFilter,
-        initialState: {
-            pagination: {
-                pageSize: 5,
-            },
-        },
+        initialState: { pagination: { pageSize: 5 } },
     });
 
-    if (isLoading) {
-        return <LoadingSkeleton></LoadingSkeleton>
-    }
+    // Loading state
+    if (isLoading) return <LoadingSkeleton />;
 
+    // Error state
     if (isError) {
-        return <div className="p-4 text-center text-red-500">Error loading parcels. Please try again later.</div>;
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
+                <Inbox className="w-16 h-16 text-red-500 opacity-70" />
+                <div className="text-xl font-bold text-red-600">Error loading parcels</div>
+                <span className="text-base text-gray-700 dark:text-gray-300">
+                    Something went wrong. Please refresh or try again later.
+                </span>
+            </div>
+        );
     }
 
     const singleParcel = singleParcelData?.data;
+    const singleParcelStatusColors = singleParcel
+        ? getStatusBadgeVariant(singleParcel.currentStatus)
+        : { backgroundColor: "", textColor: "" };
 
-    const singleParcelStatusColors = singleParcel ? getStatusBadgeVariant(singleParcel.currentStatus) : { backgroundColor: "", textColor: "" };
     return (
-        <Card className="p-4">
+        <Card className="p-4 shadow-xl border-0 bg-white/95 dark:bg-gray-950/90 rounded-2xl">
             <CardHeader>
-                <CardTitle>All Parcels</CardTitle>
-                <CardDescription>Manage all incoming and outgoing parcels.</CardDescription>
-                <div className="flex items-center py-4 justify-between">
+                <CardTitle className="text-2xl font-extrabold text-orange-700 tracking-tight">
+                    All Parcels
+                </CardTitle>
+                <CardDescription className="text-base text-gray-700 dark:text-gray-300">
+                    Manage all incoming and outgoing parcels.
+                </CardDescription>
+                <div className="flex items-center py-4 justify-between flex-wrap gap-4">
                     <Input
                         placeholder="Filter by name or tracking ID..."
                         value={globalFilter ?? ""}
@@ -349,7 +327,7 @@ const ViewAllCreatedParcels = () => {
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="rounded-md border">
+                <div className="rounded-md border overflow-x-auto bg-white dark:bg-gray-950 min-h-[500px]">
                     <Table>
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -373,6 +351,7 @@ const ViewAllCreatedParcels = () => {
                                     <TableRow
                                         key={row.id}
                                         data-state={row.getIsSelected() && "selected"}
+                                        className="hover:bg-orange-50/60 dark:hover:bg-orange-900/20 transition"
                                     >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell key={cell.id}>
@@ -383,8 +362,16 @@ const ViewAllCreatedParcels = () => {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                                        No results.
+                                    <TableCell colSpan={columns.length} className="h-32 text-center">
+                                        <div className="flex flex-col items-center justify-center min-h-[450px] gap-2 py-6">
+                                            <Inbox className="w-14 h-14 text-gray-400" />
+                                            <span className="text-lg font-semibold text-gray-600 dark:text-gray-400">
+                                                No parcels found
+                                            </span>
+                                            <span className="text-base text-gray-500 dark:text-gray-500">
+                                                You haven’t created any parcels yet. Try updating filters or check later.
+                                            </span>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -411,42 +398,7 @@ const ViewAllCreatedParcels = () => {
                 </div>
             </CardContent>
 
-            {/* <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Parcel Details</DialogTitle>
-                        <DialogDescription>
-                            All details for the selected parcel.
-                        </DialogDescription>
-                    </DialogHeader>
-                    {singleParcelLoading ? (
-                        <LoadingSkeleton></LoadingSkeleton>
-                    ) : singleParcel ? (
-                        <div className="space-y-4">
-                            <p><strong>Tracking ID:</strong> {singleParcel.trackingId}</p>
-                            <p><strong>Status:</strong> <Badge variant={getStatusBadgeVariant(singleParcel.currentStatus)}>{singleParcel.currentStatus}</Badge></p>
-                            <p><strong>Parcel Type:</strong> {singleParcel.parcelType}</p>
-                            <p><strong>Weight:</strong> {singleParcel.weight} kg</p>
-                            <p><strong>Delivery Address:</strong> {singleParcel.deliveryAddress}</p>
-                            <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Sender Details</h4>
-                            <p><strong>Name:</strong> {singleParcel.sender.name}</p>
-                            <p><strong>Email:</strong> {singleParcel.sender.email}</p>
-                            <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Receiver Details</h4>
-                            <p><strong>Name:</strong> {singleParcel.receiver.name}</p>
-                            <p><strong>Email:</strong> {singleParcel.receiver.email}</p>
-                            <p><strong>Phone:</strong> {singleParcel.receiver.phone}</p>
-                            <p><strong>Address:</strong> {singleParcel.receiver.address}</p>
-                        </div>
-                    ) : (
-                        <div>Parcel details could not be loaded.</div>
-                    )}
-                </DialogContent>
-
-            </Dialog> */}
-
-
+            {/* Details Dialog */}
             <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -456,11 +408,10 @@ const ViewAllCreatedParcels = () => {
                         </DialogDescription>
                     </DialogHeader>
                     {singleParcelLoading ? (
-                        <LoadingSkeleton></LoadingSkeleton>
+                        <LoadingSkeleton />
                     ) : singleParcel ? (
                         <div className="space-y-4">
                             <p><strong>Tracking ID:</strong> {singleParcel.trackingId}</p>
-                            {/* এখানে className দিয়ে ডাইনামিক কালার যোগ করা হয়েছে */}
                             <p>
                                 <strong>Status:</strong>
                                 <Badge className={`${singleParcelStatusColors.backgroundColor} ${singleParcelStatusColors.textColor}`}>
@@ -482,12 +433,17 @@ const ViewAllCreatedParcels = () => {
                             <p><strong>Address:</strong> {singleParcel.receiver?.address}</p>
                         </div>
                     ) : (
-                        <div>Parcel details could not be loaded.</div>
+                        <div className="flex flex-col items-center justify-center min-h-[120px] gap-2">
+                            <Inbox className="w-8 h-8 text-gray-400" />
+                            <span className="text-base text-gray-600 dark:text-gray-400">
+                                Parcel details could not be loaded.
+                            </span>
+                        </div>
                     )}
                 </DialogContent>
             </Dialog>
 
-            {/* Edit Dialog এখানে আলাদাভাবে থাকবে */}
+            {/* Edit Dialog */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
@@ -504,10 +460,9 @@ const ViewAllCreatedParcels = () => {
                 </DialogContent>
             </Dialog>
 
-
+            {/* Delete Confirmation Dialog */}
             <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <AlertDialogContent>
-
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -526,4 +481,4 @@ const ViewAllCreatedParcels = () => {
     );
 };
 
-export default ViewAllCreatedParcels
+export default ViewAllCreatedParcels;
