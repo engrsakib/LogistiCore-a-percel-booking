@@ -38,7 +38,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ChevronDown } from "lucide-react";
+import { MoreHorizontal, ChevronDown, User, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 
@@ -61,20 +61,31 @@ const columns: ColumnDef<User>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => (
+      <span className="font-semibold text-gray-800 dark:text-gray-200">{row.original.name}</span>
+    ),
   },
   {
     accessorKey: "email",
     header: "Email",
+    cell: ({ row }) => (
+      <span className="text-gray-600 dark:text-gray-300">{row.original.email}</span>
+    ),
   },
   {
     accessorKey: "role",
     header: "Role",
+    cell: ({ row }) => (
+      <span className="text-xs rounded bg-orange-50 dark:bg-orange-900 px-2 py-1 text-orange-700 dark:text-orange-300 font-semibold">
+        {row.original.role}
+      </span>
+    ),
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
-      <Badge variant={getStatusBadgeVariant(row.original.status)}>
+      <Badge className="px-2 py-1 text-sm" variant={getStatusBadgeVariant(row.original.status)}>
         {row.original.status}
       </Badge>
     ),
@@ -92,11 +103,9 @@ const columns: ColumnDef<User>[] = [
             userId: user._id,
             status: newStatus,
           };
-          const result = await changeUserStatus(payload).unwrap();
+          await changeUserStatus(payload).unwrap();
           toast.success(`User ${user.name} status updated to ${newStatus}`);
-          console.log(result);
         } catch (error) {
-          console.error(error);
           const errorMessage = error?.data?.message || "Failed to update user status.";
           toast.error(errorMessage);
         }
@@ -112,21 +121,20 @@ const columns: ColumnDef<User>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {/* <DropdownMenuItem onClick={() => alert(`View details for ${user.name}`)}>
-              View Details
-            </DropdownMenuItem> */}
             <DropdownMenuSeparator />
             {user.status === "Active" ? (
               <DropdownMenuItem
+                className="text-red-600 dark:text-red-400"
                 onClick={() => handleChangeStatus("Blocked")}
               >
-                Block User
+                <XCircle className="mr-2 h-4 w-4" /> Block User
               </DropdownMenuItem>
             ) : (
               <DropdownMenuItem
+                className="text-green-600 dark:text-green-400"
                 onClick={() => handleChangeStatus("Active")}
               >
-                Activate User
+                <User className="mr-2 h-4 w-4" /> Activate User
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
@@ -140,10 +148,7 @@ const ManageAllUsers = () => {
   const { data: allUsers, isLoading, isError } = useAllUsersQuery(undefined);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  const tableData = React.useMemo(
-    () => allUsers?.data || [],
-    [allUsers]
-  );
+  const tableData = React.useMemo(() => allUsers?.data || [], [allUsers]);
 
   const table = useReactTable({
     data: tableData,
@@ -163,29 +168,40 @@ const ManageAllUsers = () => {
   });
 
   if (isLoading) {
-    return <LoadingSkeleton></LoadingSkeleton>
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSkeleton />
+      </div>
+    );
   }
 
   if (isError) {
     return (
-      <div className="p-4 text-center text-red-500">
-        Error loading users. Please try again later.
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950">
+        <div className="p-8 text-center text-red-500 text-lg font-semibold rounded-xl shadow">
+          Error loading users. Please try again later.
+        </div>
       </div>
     );
   }
 
   return (
-    <Card className="p-4">
+    <Card className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 dark:from-gray-900 dark:to-orange-900 shadow-xl border-0 rounded-2xl p-4 md:p-8">
       <CardHeader>
-        <CardTitle>All Users</CardTitle>
-        <CardDescription>Manage all user accounts.</CardDescription>
-        <div className="flex items-center py-4 justify-between">
+        <div className="flex items-center gap-2 mb-2">
+          <User className="w-7 h-7 text-orange-500" />
+          <CardTitle className="text-2xl md:text-3xl font-extrabold text-orange-700 tracking-tight">
+            All Users
+          </CardTitle>
+        </div>
+        <CardDescription className="text-base text-gray-700 dark:text-gray-300">
+          Manage all user accounts.
+        </CardDescription>
+        <div className="flex flex-col md:flex-row items-center py-4 justify-between gap-4">
           <Input
             placeholder="Filter by name or email..."
             value={globalFilter ?? ""}
-            onChange={(event) =>
-              setGlobalFilter(String(event.target.value))
-            }
+            onChange={(event) => setGlobalFilter(String(event.target.value))}
             className="max-w-sm"
           />
           <DropdownMenu>
@@ -215,13 +231,13 @@ const ManageAllUsers = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto bg-white dark:bg-gray-950 min-h-[400px]">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="text-base font-semibold">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -239,9 +255,10 @@ const ManageAllUsers = () => {
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    className="hover:bg-orange-50/60 dark:hover:bg-orange-900/20 transition"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell key={cell.id} className="py-3">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
@@ -251,9 +268,17 @@ const ManageAllUsers = () => {
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center"
+                    className="h-32 text-center"
                   >
-                    No results.
+                    <div className="flex flex-col items-center justify-center min-h-[120px] gap-2 py-6">
+                      <XCircle className="w-10 h-10 text-gray-400" />
+                      <span className="text-lg font-semibold text-gray-600 dark:text-gray-400">
+                        No users found
+                      </span>
+                      <span className="text-base text-gray-500 dark:text-gray-500">
+                        Try updating filters or check later.
+                      </span>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
