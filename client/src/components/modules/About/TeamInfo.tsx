@@ -20,7 +20,7 @@ const teamMembers = [
   {
     name: "Md. Nazmus Sakib",
     role: "Chief Executive Officer",
-    avatar: "https://randomuser.me/api/portraits/women/5.jpg",
+    avatar: "https://github.com/engrsakib/LogistiCore-a-percel-booking/blob/clientDev/client/public/sakib.jpg?raw=true",
     bio: "Md. Nazmus Sakib manages our entire delivery network, ensuring every parcel is handled with care and efficiency.",
   },
   {
