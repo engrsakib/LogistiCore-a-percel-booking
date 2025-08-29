@@ -20,6 +20,7 @@ import Contact from "@/pages/Contact";
 import Careers from "@/pages/Careers";
 import TermsOfService from "@/pages/TermsService";
 import FAQ from "@/pages/FAQ";
+import HELP from "@/pages/HelpCenter";
 
 export const router = createBrowserRouter([
 
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
             {
                 path: "frequently-asked-questions",
                 Component: FAQ,
+            },
+            {
+                path: "help-center",
+                Component: HELP,
             },
             
         ],
