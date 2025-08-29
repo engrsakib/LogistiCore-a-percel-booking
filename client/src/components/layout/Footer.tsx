@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaFacebookF, FaTwitter, FaInstagram, FaGithub } from 'react-icons/fa';
 
 const Footer = () => {
@@ -13,7 +13,7 @@ const Footer = () => {
     year: "numeric",
   });
 
-  const navigate = useNavigate();
+  
 
   // LinkedIn click handler with router navigation (next navigation style)
   const handleSakibClick = (e: React.MouseEvent) => {
