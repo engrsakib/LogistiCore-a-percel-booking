@@ -5,23 +5,29 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const teamMembers = [
   {
-    name: "Fatema Bushra",
-    role: "CEO & Founder",
-    avatar: "https://randomuser.me/api/portraits/men/4.jpg",
-    bio: "Fatema has over 15 years of experience in logistics and is passionate about solving delivery challenges."
+    name: "Bushra",
+    role: "Chairman",
+    avatar: "https://github.com/engrsakib/LogistiCore-a-percel-booking/blob/clientDev/client/public/fatema.jpg?raw=true",
+    bio: "Bushra has over 15 years of experience in logistics and is passionate about solving delivery challenges."
   },
   {
-    name: "Shila Ahmed",
-    role: "Head of Operations",
+    name: "Md. Nazmus Sakib",
+    role: "Chief Executive Officer",
     avatar: "https://randomuser.me/api/portraits/women/5.jpg",
-    bio: "Shila manages our entire delivery network, ensuring every parcel is handled with care and efficiency."
+    bio: "Md. Nazmus Sakib manages our entire delivery network, ensuring every parcel is handled with care and efficiency."
   },
   {
     name: "Kamal Hossain",
-    role: "Lead Developer",
+    role: "Chief Technology Officer",
     avatar: "https://randomuser.me/api/portraits/men/6.jpg",
     bio: "Kamal is the mastermind behind our advanced tracking system and user-friendly web platform."
-  }
+  },
+  {
+    name: "Kamal Hossain",
+    role: "Chief Operating Officer",
+    avatar: "https://randomuser.me/api/portraits/men/6.jpg",
+    bio: "Kamal is the mastermind behind our advanced tracking system and user-friendly web platform."
+  },
 ];
 
 const TeamInfo = () => {
