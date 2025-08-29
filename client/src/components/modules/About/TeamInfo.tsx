@@ -24,16 +24,16 @@ const teamMembers = [
     bio: "Md. Nazmus Sakib manages our entire delivery network, ensuring every parcel is handled with care and efficiency.",
   },
   {
-    name: "Kamal Hossain",
+    name: "Mahmudun Nabi Shaine",
     role: "Chief Technology Officer",
-    avatar: "https://randomuser.me/api/portraits/men/6.jpg",
-    bio: "Kamal is the mastermind behind our advanced tracking system and user-friendly web platform.",
+    avatar: "https://github.com/engrsakib/LogistiCore-a-percel-booking/blob/clientDev/client/public/shafin.jpg?raw=true",
+    bio: "Mahmudun Nabi Shaine is the mastermind behind our advanced tracking system and user-friendly web platform.",
   },
   {
-    name: "Kamal Hossain",
+    name: "UT MIM",
     role: "Chief Operating Officer",
-    avatar: "https://randomuser.me/api/portraits/women/0.jpg",
-    bio: "Kamal is the mastermind behind our advanced tracking system and user-friendly web platform.",
+    avatar: "https://github.com/engrsakib/LogistiCore-a-percel-booking/blob/clientDev/client/public/umaiya.jpg?raw=true",
+    bio: "UT MIM is the mastermind behind our advanced tracking system and user-friendly web platform.",
   },
 ];
 
