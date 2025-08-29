@@ -24,10 +24,10 @@ const teamMembers = [
     bio: "Md. Nazmus Sakib manages our entire delivery network, ensuring every parcel is handled with care and efficiency.",
   },
   {
-    name: "Mahmudun Nabi Shaine",
+    name: "MN Shafin",
     role: "Chief Technology Officer",
     avatar: "https://github.com/engrsakib/LogistiCore-a-percel-booking/blob/clientDev/client/public/shafin.jpg?raw=true",
-    bio: "Mahmudun Nabi Shaine is the mastermind behind our advanced tracking system and user-friendly web platform.",
+    bio: "Mahamodon Nabi Shafin is the mastermind behind our advanced tracking system and user-friendly web platform.",
   },
   {
     name: "UT MIM",
