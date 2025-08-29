@@ -11,14 +11,14 @@ type ThemeProviderProps = {
 
 export function ThemeProvider({
   children,
-  defaultTheme = "light", // Default value set here
+  defaultTheme = "light", // Default value set here (always light)
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
   // Always fallback to "light" if no theme in localStorage
   const [theme, setTheme] = useState<Theme>(() => {
     const stored = localStorage.getItem(storageKey) as Theme | null;
-    return stored || defaultTheme || "light";
+    return stored || "light" || defaultTheme; // Always fallback to light
   });
 
   useEffect(() => {
