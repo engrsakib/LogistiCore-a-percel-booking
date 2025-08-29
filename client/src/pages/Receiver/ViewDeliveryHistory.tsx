@@ -35,7 +35,6 @@ import { format } from 'date-fns';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 
-// Helper for badge colors
 const getStatusBadgeVariant = (status: string) => {
     switch (status) {
         case "Requested":
@@ -175,7 +174,7 @@ const ViewDeliveryHistory = () => {
 
     if (userError || parcelsError) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[300px] gap-4">
+            <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
                 <Inbox className="w-16 h-16 text-red-500 opacity-70" />
                 <div className="text-xl font-bold text-red-600">Error loading delivery history</div>
                 <span className="text-base text-gray-700 dark:text-gray-300">
@@ -234,7 +233,7 @@ const ViewDeliveryHistory = () => {
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="rounded-md border overflow-x-auto bg-white dark:bg-gray-950">
+                <div className="rounded-md border overflow-x-auto bg-white dark:bg-gray-950 min-h-[500px]">
                     <Table>
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -270,7 +269,7 @@ const ViewDeliveryHistory = () => {
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={columns.length} className="h-32 text-center">
-                                        <div className="flex flex-col items-center justify-center gap-2 py-6">
+                                        <div className="flex flex-col items-center justify-center min-h-[450px] gap-2 py-6">
                                             <Inbox className="w-14 h-14 text-gray-400" />
                                             <span className="text-lg font-semibold text-gray-600 dark:text-gray-400">
                                                 No delivered parcels found
@@ -305,7 +304,6 @@ const ViewDeliveryHistory = () => {
                 </div>
             </CardContent>
 
-            {/* Parcel Details Dialog */}
             <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
