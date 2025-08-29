@@ -186,125 +186,129 @@ const ManageAllUsers = () => {
   }
 
   return (
-    <Card className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 dark:from-gray-900 dark:to-orange-900 shadow-xl border-0 rounded-2xl p-4 md:p-8">
-      <CardHeader>
-        <div className="flex items-center gap-2 mb-2">
-          <User className="w-7 h-7 text-orange-500" />
-          <CardTitle className="text-2xl md:text-3xl font-extrabold text-orange-700 tracking-tight">
-            All Users
-          </CardTitle>
-        </div>
-        <CardDescription className="text-base text-gray-700 dark:text-gray-300">
-          Manage all user accounts.
-        </CardDescription>
-        <div className="flex flex-col md:flex-row items-center py-4 justify-between gap-4">
-          <Input
-            placeholder="Filter by name or email..."
-            value={globalFilter ?? ""}
-            onChange={(event) => setGlobalFilter(String(event.target.value))}
-            className="max-w-sm"
-          />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columns <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border overflow-x-auto bg-white dark:bg-gray-950 min-h-[400px]">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className="text-base font-semibold">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
+    <div className="min-h-screen w-full flex items-center justify-center px-2 py-4">
+      <Card className="w-full max-w-full bg-gradient-to-br from-orange-50 via-white to-orange-100 dark:from-gray-900 dark:to-orange-900 shadow-xl border-0 rounded-2xl p-2 sm:p-4 md:p-8 transition-all duration-300">
+        <CardHeader>
+          <div className="flex items-center gap-2 mb-2">
+            <User className="w-7 h-7 text-orange-500" />
+            <CardTitle className="text-2xl md:text-3xl font-extrabold text-orange-700 tracking-tight">
+              All Users
+            </CardTitle>
+          </div>
+          <CardDescription className="text-base text-gray-700 dark:text-gray-300">
+            Manage all user accounts.
+          </CardDescription>
+          <div className="flex flex-col md:flex-row items-center py-4 justify-between gap-4">
+            <Input
+              placeholder="Filter by name or email..."
+              value={globalFilter ?? ""}
+              onChange={(event) => setGlobalFilter(String(event.target.value))}
+              className="max-w-sm w-full"
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto w-full md:w-auto">
+                  Columns <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
                   ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="hover:bg-orange-50/60 dark:hover:bg-orange-900/20 transition"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="py-3">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border overflow-x-auto bg-white dark:bg-gray-950 min-h-[400px]">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id} className="text-base font-semibold whitespace-nowrap">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
                     ))}
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-32 text-center"
-                  >
-                    <div className="flex flex-col items-center justify-center min-h-[120px] gap-2 py-6">
-                      <XCircle className="w-10 h-10 text-gray-400" />
-                      <span className="text-lg font-semibold text-gray-600 dark:text-gray-400">
-                        No users found
-                      </span>
-                      <span className="text-base text-gray-500 dark:text-gray-500">
-                        Try updating filters or check later.
-                      </span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      className="hover:bg-orange-50/60 dark:hover:bg-orange-900/20 transition"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id} className="py-3 whitespace-nowrap">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-32 text-center"
+                    >
+                      <div className="flex flex-col items-center justify-center min-h-[120px] gap-2 py-6">
+                        <XCircle className="w-10 h-10 text-gray-400" />
+                        <span className="text-lg font-semibold text-gray-600 dark:text-gray-400">
+                          No users found
+                        </span>
+                        <span className="text-base text-gray-500 dark:text-gray-500">
+                          Try updating filters or check later.
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-end space-x-0 sm:space-x-2 py-4 gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              className="w-full sm:w-auto"
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              className="w-full sm:w-auto"
+            >
+              Next
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
