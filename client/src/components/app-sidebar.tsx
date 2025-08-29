@@ -11,24 +11,42 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Link } from "react-router";
+import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from "react-router-dom";
 import { getSidebarItems } from "@/utils/getSidebarItems";
-import { useUserInfoQuery } from "@/redux/features/auth/auth.api";
+import { useUserInfoQuery, useLogoutMutation, authApi } from "@/redux/features/auth/auth.api";
+import { useAppDispatch } from "@/redux/hook";
+import toast from "react-hot-toast";
 
 // Sidebar brand name
 const BRAND_NAME = "Logisti Core";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: userData } = useUserInfoQuery(undefined);
+  const [logout, { isLoading }] = useLogoutMutation();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const data = {
     navMain: getSidebarItems(userData?.data?.role),
   };
 
+  // Logout handler
+  const handleLogout = async () => {
+    try {
+      await logout(undefined).unwrap();
+      dispatch(authApi.util.resetApiState());
+      navigate("/login");
+      toast.success("Successfully logged out.");
+    } catch (err) {
+      toast.error("Failed to log out. Please try again.");
+    }
+  };
+
   return (
     <Sidebar
       {...props}
-      className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 dark:from-gray-900 dark:to-orange-900 shadow-xl border-r border-orange-200 dark:border-orange-900"
+      className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 dark:from-gray-900 dark:to-orange-900 shadow-xl border-r border-orange-200 dark:border-orange-900 relative"
     >
       <SidebarHeader>
         <Link to={"/"}>
@@ -92,6 +110,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
+      {/* Logout Button - fixed to bottom */}
+      <div
+        className="absolute bottom-0 left-0 w-full px-4 pb-6 flex items-center justify-center"
+        style={{ zIndex: 10 }}
+      >
+        <Button
+          onClick={handleLogout}
+          disabled={isLoading}
+          className="w-full py-2 rounded-xl bg-gradient-to-r from-orange-500 to-orange-700 text-white font-semibold shadow-lg hover:scale-105 hover:from-orange-600 hover:to-orange-800 transition-all duration-150 active:scale-95"
+        >
+          {isLoading ? "Logging out..." : "Logout"}
+        </Button>
+      </div>
       <SidebarRail className="hidden md:block" />
     </Sidebar>
   );
