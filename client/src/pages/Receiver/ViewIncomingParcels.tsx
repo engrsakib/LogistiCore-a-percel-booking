@@ -60,7 +60,7 @@ const getStatusBadgeVariant = (status: string) => {
 
 const ViewIncomingParcels = () => {
     const { data: allParcels, isLoading, isError } = useGetIncomingParcelsQuery(undefined);
-    const [cancelParcel] = useConfirmParcelMutation();
+    const [confirmParcel] = useConfirmParcelMutation();
     const [globalFilter, setGlobalFilter] = React.useState("");
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = React.useState(false);
     const [selectedParcelId, setSelectedParcelId] = React.useState<string | null>(null);
@@ -69,12 +69,12 @@ const ViewIncomingParcels = () => {
         skip: !selectedParcelId,
     });
 
-    const handleCancel = async (parcelId: string) => {
+    const handleConfirm = async (parcelId: string) => {
         try {
-            await cancelParcel(parcelId).unwrap();
-            toast.success(`Parcel has been cancelled.`);
+            await confirmParcel(parcelId).unwrap();
+            toast.success(`Parcel has been confirmed.`);
         } catch (error) {
-            const errorMessage = error?.data?.message || "Failed to cancel parcel. It might have already been processed.";
+            const errorMessage = error?.data?.message || "Failed to confirm parcel. It might have already been processed.";
             toast.error(errorMessage);
         }
     };
@@ -153,7 +153,7 @@ const ViewIncomingParcels = () => {
                             }}>
                                 View Details
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleCancel(parcel._id)}>
+                            <DropdownMenuItem onClick={() => handleConfirm(parcel._id)}>
                                 Confirm Parcel
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -201,14 +201,14 @@ const ViewIncomingParcels = () => {
         : { backgroundColor: "", textColor: "" };
 
     return (
-        <Card className="p-4 shadow-xl border-0 bg-white/95 dark:bg-gray-950/90 rounded-2xl">
+        <Card className="p-4 shadow-xl border-0 bg-white/95 dark:bg-gray-950/90 rounded-2xl min-h-screen">
             <CardHeader>
                 <CardTitle className="text-2xl font-extrabold text-orange-700 tracking-tight flex items-center gap-2">
                     <PackageSearch className="w-7 h-7 text-orange-500" />
-                    All Parcels
+                    Incoming Parcels
                 </CardTitle>
                 <CardDescription className="text-base text-gray-700 dark:text-gray-300">
-                    Manage all incoming and outgoing parcels.
+                    Manage all your incoming parcels.
                 </CardDescription>
                 <div className="flex items-center py-4 justify-between flex-wrap gap-4">
                     <Input
@@ -315,9 +315,12 @@ const ViewIncomingParcels = () => {
                 </div>
             </CardContent>
             <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[450px] rounded-2xl border-0 bg-white dark:bg-gray-950 p-6">
                     <DialogHeader>
-                        <DialogTitle>Parcel Details</DialogTitle>
+                        <div className="flex items-center gap-2 mb-2">
+                            <PackageSearch className="w-7 h-7 text-orange-500" />
+                            <DialogTitle className="text-xl font-bold text-orange-700">Parcel Details</DialogTitle>
+                        </div>
                         <DialogDescription>
                             All details for the selected parcel.
                         </DialogDescription>
@@ -325,27 +328,43 @@ const ViewIncomingParcels = () => {
                     {singleParcelLoading ? (
                         <LoadingSkeleton />
                     ) : singleParcel ? (
-                        <div className="space-y-4">
-                            <p><strong>Tracking ID:</strong> {singleParcel.trackingId}</p>
-                            <p>
-                                <strong>Status:</strong>
+                        <div className="space-y-4 pt-2">
+                            <div className="flex flex-row gap-2 items-center">
+                                <span className="font-semibold text-gray-600 dark:text-gray-200">Tracking ID:</span>
+                                <span className="text-base font-mono rounded bg-gray-100 dark:bg-gray-800 px-2">{singleParcel.trackingId}</span>
+                            </div>
+                            <div className="flex flex-row gap-2 items-center">
+                                <span className="font-semibold text-gray-600 dark:text-gray-200">Status:</span>
                                 <Badge className={`${singleParcelStatusColors.backgroundColor} ${singleParcelStatusColors.textColor}`}>
                                     {singleParcel.currentStatus}
                                 </Badge>
-                            </p>
-                            <p><strong>Parcel Type:</strong> {singleParcel.parcelType}</p>
-                            <p><strong>Weight:</strong> {singleParcel.weight} kg</p>
-                            <p><strong>Delivery Address:</strong> {singleParcel.deliveryAddress}</p>
+                            </div>
+                            <div className="flex flex-row gap-2 items-center">
+                                <span className="font-semibold text-gray-600 dark:text-gray-200">Parcel Type:</span>
+                                <span>{singleParcel.parcelType}</span>
+                            </div>
+                            <div className="flex flex-row gap-2 items-center">
+                                <span className="font-semibold text-gray-600 dark:text-gray-200">Weight:</span>
+                                <span>{singleParcel.weight} kg</span>
+                            </div>
+                            <div className="flex flex-row gap-2 items-center">
+                                <span className="font-semibold text-gray-600 dark:text-gray-200">Delivery Address:</span>
+                                <span>{singleParcel.deliveryAddress}</span>
+                            </div>
                             <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Sender Details</h4>
-                            <p><strong>Name:</strong> {singleParcel.sender?.name}</p>
-                            <p><strong>Email:</strong> {singleParcel.sender?.email}</p>
+                            <h4 className="font-semibold mt-4 text-orange-700 dark:text-orange-300">Sender Details</h4>
+                            <div className="flex flex-col gap-1 ml-2">
+                                <span><span className="font-semibold">Name:</span> {singleParcel.sender?.name}</span>
+                                <span><span className="font-semibold">Email:</span> {singleParcel.sender?.email}</span>
+                            </div>
                             <DropdownMenuSeparator />
-                            <h4 className="font-semibold">Receiver Details</h4>
-                            <p><strong>Name:</strong> {singleParcel.receiver?.name}</p>
-                            <p><strong>Email:</strong> {singleParcel.receiver?.email}</p>
-                            <p><strong>Phone:</strong> {singleParcel.receiver?.phone}</p>
-                            <p><strong>Address:</strong> {singleParcel.receiver?.address}</p>
+                            <h4 className="font-semibold mt-4 text-orange-700 dark:text-orange-300">Receiver Details</h4>
+                            <div className="flex flex-col gap-1 ml-2">
+                                <span><span className="font-semibold">Name:</span> {singleParcel.receiver?.name}</span>
+                                <span><span className="font-semibold">Email:</span> {singleParcel.receiver?.email}</span>
+                                <span><span className="font-semibold">Phone:</span> {singleParcel.receiver?.phone}</span>
+                                <span><span className="font-semibold">Address:</span> {singleParcel.receiver?.address}</span>
+                            </div>
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center min-h-[120px] gap-2">
