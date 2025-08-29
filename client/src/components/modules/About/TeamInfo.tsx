@@ -1,63 +1,110 @@
-// src/components/TeamInfo.tsx
-
-import { Card, CardContent,  CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+// Palette
+const COLORS = {
+  main: "#FF771A",
+  soft: "#FFB877",
+  accent: "#FFE2C6",
+  dark: "#24252A",
+};
 
 const teamMembers = [
   {
     name: "Bushra",
     role: "Chairman",
     avatar: "https://github.com/engrsakib/LogistiCore-a-percel-booking/blob/clientDev/client/public/fatema.jpg?raw=true",
-    bio: "Bushra has over 15 years of experience in logistics and is passionate about solving delivery challenges."
+    bio: "Bushra has over 15 years of experience in logistics and is passionate about solving delivery challenges.",
   },
   {
     name: "Md. Nazmus Sakib",
     role: "Chief Executive Officer",
     avatar: "https://randomuser.me/api/portraits/women/5.jpg",
-    bio: "Md. Nazmus Sakib manages our entire delivery network, ensuring every parcel is handled with care and efficiency."
+    bio: "Md. Nazmus Sakib manages our entire delivery network, ensuring every parcel is handled with care and efficiency.",
   },
   {
     name: "Kamal Hossain",
     role: "Chief Technology Officer",
     avatar: "https://randomuser.me/api/portraits/men/6.jpg",
-    bio: "Kamal is the mastermind behind our advanced tracking system and user-friendly web platform."
+    bio: "Kamal is the mastermind behind our advanced tracking system and user-friendly web platform.",
   },
   {
     name: "Kamal Hossain",
     role: "Chief Operating Officer",
-    avatar: "https://randomuser.me/api/portraits/men/6.jpg",
-    bio: "Kamal is the mastermind behind our advanced tracking system and user-friendly web platform."
+    avatar: "https://randomuser.me/api/portraits/women/0.jpg",
+    bio: "Kamal is the mastermind behind our advanced tracking system and user-friendly web platform.",
   },
 ];
 
+const TeamCard: React.FC<{ member: typeof teamMembers[0] }> = ({ member }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  return (
+    <div
+      className="group perspective"
+      onMouseEnter={() => setIsFlipped(true)}
+      onMouseLeave={() => setIsFlipped(false)}
+      tabIndex={0}
+      style={{ outline: 'none' }}
+    >
+      <div className={`relative w-full h-80 transition-transform duration-700 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
+        {/* Front Side */}
+        <Card className="absolute w-full h-full flex flex-col items-center justify-center p-8 text-center shadow-2xl border-0 bg-white/95 dark:bg-[#24252A]/90 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-3xl overflow-visible [backface-visibility:hidden]">
+          <Avatar className="h-24 w-24 mb-6 ring-4 ring-[#FF771A]/30 shadow-lg">
+            <AvatarImage src={member.avatar} alt={member.name} />
+            <AvatarFallback className="text-3xl font-bold text-[#FF771A] bg-[#FFB877]/40">
+              {member.name.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+          <CardTitle className="mb-1 text-2xl font-extrabold text-[#FF771A] drop-shadow">
+            {member.name}
+          </CardTitle>
+          <p className="text-[#FFB877] font-semibold mb-2 uppercase tracking-wide">
+            {member.role}
+          </p>
+        </Card>
+        {/* Back Side */}
+        <Card className="absolute w-full h-full flex flex-col items-center justify-center p-8 text-center shadow-2xl border-0 bg-[#FF771A]/90 dark:bg-[#24252A]/95 rounded-2xl transition-all duration-700 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+          <CardContent className="flex flex-col justify-center items-center h-full p-0">
+            <p className="text-white dark:text-[#FFB877] text-lg font-medium animate-slideUp">
+              {member.bio}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+      <style>
+        {`
+        .perspective {
+          perspective: 1200px;
+        }
+        @keyframes slideUp {
+          0% { transform: translateY(40px); opacity: 0; }
+          70% { opacity: 1; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slideUp {
+          animation: slideUp 0.6s cubic-bezier(.48,.14,.44,1.01);
+        }
+        `}
+      </style>
+    </div>
+  );
+};
+
 const TeamInfo = () => {
   return (
-    <section className="py-24 bg-card-foreground/5">
+    <section className="py-24 bg-gradient-to-br from-[#FFE2C6] via-white to-[#FFB877]/40 dark:from-[#24252A] dark:to-[#FF771A]/10 transition-colors">
       <div className="container mx-auto px-4 text-center">
-        <h2 className="text-4xl font-extrabold mb-4 tracking-tight lg:text-5xl">
+        <h2 className="text-4xl font-extrabold mb-4 tracking-tight lg:text-5xl text-[#FF771A] drop-shadow">
           Meet Our Team
         </h2>
-        <p className="max-w-2xl mx-auto text-muted-foreground mb-12">
+        <p className="max-w-2xl mx-auto text-[#24252A]/80 dark:text-white/80 mb-12 text-lg font-medium">
           Behind every successful delivery is a team of dedicated professionals.
         </p>
-
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           {teamMembers.map((member, index) => (
-            <Card key={index} className="flex flex-col items-center p-6 text-center shadow-lg transition-all duration-300 hover:scale-105">
-              <Avatar className="h-24 w-24 mb-4">
-                <AvatarImage src={member.avatar} />
-                <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <CardTitle className="mb-1 text-2xl font-bold">
-                {member.name}
-              </CardTitle>
-              <p className="text-primary font-semibold mb-4">{member.role}</p>
-              <CardContent className="p-0">
-                <p className="text-muted-foreground">
-                  {member.bio}
-                </p>
-              </CardContent>
-            </Card>
+            <TeamCard member={member} key={index} />
           ))}
         </div>
       </div>
